@@ -5,13 +5,13 @@
 
     <div class="grid grid-cols-2 gap-4">
       <div class="bg-amber-100 p-20 border-2 border-amber-200 rounded-4xl">
-        <router-link to="/professor">
+        <router-link to='/professor'>
           <button class="text-2xl">Sou professor</button>
         </router-link>
       </div>
 
       <div class="bg-amber-100 p-20 border-2 border-amber-200 rounded-4xl">
-        <router-link to="/aluno">
+        <router-link to='/aluno'>
           <button class="text-2xl">Sou aluno</button>
         </router-link>
       </div>
@@ -19,3 +19,8 @@
     </div>
   </div>
 </template>
+
+<script setup>
+
+
+</script>

@@ -4,6 +4,6 @@
 
 <template>
     <main>
-        <RouterView/>
+        <RouterView class="font-excali "/>
     </main>
 </template>

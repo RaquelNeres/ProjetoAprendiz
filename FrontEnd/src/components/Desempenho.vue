@@ -1,32 +1,54 @@
 <template>
+  <q-card 
+    flat 
+    bordered 
+    class="w-full q-mt-lg q-pb-lg q-pt-md column q-gap-sm"
+    style="max-width: 1040px; border-radius: 32px; border-width: 2px; border-color: black;"
+  >
+    <q-card-section>
+      <div 
+        class="text-h4 q-ml-md q-mr-lg border-b-2 pb-2" 
+      >
+        Frequencia
+      </div>
+    </q-card-section>
 
-    <div class="max-w-260 w-full mb-10 
-        border-2 rounded-4xl mt-7 pb-10 pt-5 
-        flex flex-col gap-2">
-        <h2 class="font-medium text-[40px] ml-10 border-b-2 mr-15">Desempenho</h2>
-    
-        <div v-if="alunos.length" class="flex flex-col gap-3">
-            <div v-for="aluno in alunos" :key="aluno.id" class="flex items-center">
-                <p class="text-lg ml-15 mr-10 w-20 ">{{ aluno.name }}</p>
-                <meter
-                    class="mt-1 w-120"
-                    id="progresso"
-                    :value="aluno.frequencia"
-                    min="0"
-                    max="100"
-                    low="60"
-                    high="75"
-                    optimum="100"
-                ></meter>
-                <p class="ml-5">{{ aluno.frequencia }}%</p>
-            </div>
+    <q-card-section v-if="alunos.length" class="column q-gap-md">
+      <div v-for="aluno in alunos" :key="aluno.id" class="row items-center no-wrap q-px-md">
+        
+        <div class="text-h6 ellipsis w-25">
+          {{ aluno.name }}
         </div>
-    </div>
+        
+        <div class="col q-px-md">
+          <q-linear-progress
+            :value="aluno.frequencia / 100"
+            :color="getCorProgresso(aluno.frequencia)"
+            size="12px"
+            rounded
+          />
+        </div>
+        
+        <div class="text-right text-h6 w-15">
+          {{ aluno.frequencia }}%
+        </div>
+
+      </div>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script setup>
-    const props = defineProps({
-       alunos: Array
-    })
+  const props = defineProps({
+    alunos: {
+      type: Array,
+      default: () => []
+    }
+  })
 
+  const getCorProgresso = (frequencia) => {
+    if (frequencia >= 75) return 'positive'
+    if (frequencia >= 60) return 'warning' 
+    return 'negative'                      
+  }
 </script>

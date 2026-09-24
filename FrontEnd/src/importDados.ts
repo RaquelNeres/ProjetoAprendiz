@@ -1,5 +1,7 @@
 // src/stores/cursoStore.js
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+
+export const logado = ref(true);  
 
 export const cursoState = reactive({
   aulas: [
@@ -43,7 +45,7 @@ export const cursoState = reactive({
       topicos: ["Dó Central", "Numeração dos dedos", "Exercícios de 5 dedos"], 
       video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
       imgs: "https://dailyverses.net/images/pt/arc/salmos-32-8-3.jpg", 
-      atividades: "https://www.superpartituras.com/Content/demonstracoes/apostila-1.jpg", 
+      atividades: "", 
       presentes: ["Joao", "Camila", "Lucas"] 
     },
     { 
@@ -78,6 +80,6 @@ export const cursoState = reactive({
     { id: 2, name: "Maria", senha: "4321", disciplina: "Partitura", frequencia: 95 },
     { id: 6, name: "Carlos", senha: "carlos_part", disciplina: "Partitura", frequencia: 80 },
     { id: 7, name: "Fernanda", senha: "fer_musica", disciplina: "Partitura", frequencia: 70 },
-    { id: 8, name: "Juliana", senha: "ju_solfa", disciplina: "Partitura", frequencia: 85 }
+    { id: 8, name: "Juliana", senha: "ju_solfa", disciplina: "Partitura", frequencia: 45 }
   ]
 })

@@ -1,10 +1,13 @@
 <template>
   <div class="flex flex-col items-center">
+    <q-btn rounded class="fixed top-5 left-5 z-50"
+        label="Voltar" to="/aluno"
+    </q-btn>
         
-    <header class="text-center mt-6 ">
-        <h1 class="font-medium text-[50px] text-center mb-5">
+    <header class="text-center mt-5 ">
+        <p class="font-medium text-[50px] text-center mb-5">
             APDSJ, Aprendizes de {{disciplina}}
-        </h1>
+        </p>
     </header>
 
     <div class="flex justify-center">
@@ -13,7 +16,9 @@
 
     <Desempenho :alunos="alunos"/>
 
-    <ConteudoAulas :aulas="aulas"/>
+    <div class="max-w-300 w-full ">
+        <ConteudoAulas  :aulas="aulas"/>
+    </div>
 
   </div>
 </template>
@@ -24,8 +29,9 @@
     import Desempenho from '../../components/Desempenho.vue'
     import ConteudoAulas from '../../components/ConteudoAulas.vue'
     import { cursoState } from '/src/importDados.js'
-
+  
     const route = useRoute()
+
     const parametroRota = computed(() => (route.params.disciplina || '').toString().toLowerCase())
 
     const disciplina = computed(() => {

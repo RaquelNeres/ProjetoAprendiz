@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+
+@theme {
+  /* Se você estiver usando o Tailwind v4.0+, pode pular o passo 2 e definir direto aqui: */
+  --font-excali: "Excalifont", "Virgil", cursive;
+}
+
+/* Importação do arquivo de fonte (funciona tanto para Tailwind v3 quanto v4) */
+@font-face {
+  font-family: 'Excalifont';
+  src: url('https://excalidraw.com') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

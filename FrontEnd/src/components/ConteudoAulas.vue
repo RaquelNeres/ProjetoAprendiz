@@ -1,9 +1,15 @@
 <template>
 
-    <div v-if="aulas.length" class="flex flex-col gap-3">
-        <div v-for="aula in aulas" :key="aula.id" class="flex items-center">
-            <p class="text-xl ml-15 mr-10">{{ aula.name }}</p>
-        </div>
+    <div v-if="aulas.length" v-for="aula in aulas" :key="aula.id" 
+        class="max-w-300 w-full mb-7
+            border-2 rounded-2xl pb-5 pt-5">
+
+        <details class="text-xl ml-10">
+            <summary>{{ aula.name }}</summary>
+
+            <h2 class="ml-5 mt-3">Topicos</h2>
+            <li v-for="topico in aula.topicos" class="ml-5 mt-1">{{ topico }}</li>
+        </details>
 
     </div>
 </template>

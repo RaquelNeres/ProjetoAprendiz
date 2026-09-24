@@ -2,11 +2,10 @@ import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 // import Home from '../src/App.vue'
 import Index from './views/Index.vue'
 import Professor from '../src/views/Professor/Home.vue'
-import Aluno from '../src/views/Alunos/Home.vue'
+import Aluno from '../src/views/Alunos/Aluno.vue'
+import Disciplina from '../src/views/Alunos/Disciplina.vue'
 import Login from './views/Professor/Login.vue'
 import Erro from './views/Professor/Erro.vue'
-import Teclado from './views/Alunos/Teclado.vue'
-import Partitura from './views/Alunos/Partitura.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -35,14 +34,9 @@ const routes: Array<RouteRecordRaw> = [
     component: Aluno 
   },
   {
-    path: '/teclado',
-    name: 'Teclado',
-    component: Teclado
-  },
-  {
-    path: '/partitura',
-    name: 'Partitura',
-    component: Partitura
+    path: '/:disciplina',
+    name: 'Disciplina',
+    component: Disciplina
   }
 ]
 

@@ -2,8 +2,9 @@
   <q-card 
     flat 
     bordered 
-    class="w-full q-mt-lg q-pb-lg q-pt-md column q-gap-sm"
-    style="max-width: 1040px; border-radius: 32px; border-width: 2px; border-color: black;"
+    class="w-full q-mt-lg q-pb-lg q-pt-md column q-gap-sm
+    max-w-[1040px] rounded-xl border-8 border-black"
+    style="border-radius: 32px; border-width: 2px; border-color: black;"
   >
     <q-card-section>
       <div 

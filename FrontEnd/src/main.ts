@@ -1,4 +1,4 @@
-// main.ts
+import '@quasar/extras/material-icons/material-icons.css'
 import { createApp } from 'vue'
 import { Quasar, Notify, Dialog } from 'quasar'
 import App from './App.vue'

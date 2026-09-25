@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center">
     <q-btn rounded class="fixed top-5 left-5 z-50"
-        label="Voltar" to="/aluno"
+        label="Voltar" to="/aluno">
     </q-btn>
         
     <header class="text-center mt-5 ">
@@ -16,8 +16,8 @@
 
     <Desempenho :alunos="alunos"/>
 
-    <div class="max-w-300 w-full ">
-        <ConteudoAulas  :aulas="aulas"/>
+    <div class="max-w-300 w-full">
+        <alunosAulas  :aulas="aulas"/>
     </div>
 
   </div>
@@ -27,7 +27,7 @@
     import { computed } from 'vue'
     import { useRoute } from 'vue-router'
     import Desempenho from '../../components/Desempenho.vue'
-    import ConteudoAulas from '../../components/ConteudoAulas.vue'
+    import alunosAulas from '../../components/alunosAulas.vue'
     import { cursoState } from '/src/importDados.js'
   
     const route = useRoute()

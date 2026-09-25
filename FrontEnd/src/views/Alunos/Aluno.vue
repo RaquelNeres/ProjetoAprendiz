@@ -1,7 +1,7 @@
 <template>
   <div class="flex min-h-screen w-full flex-col items-center justify-center">
     <q-btn rounded class="fixed top-5 left-5 z-50"
-        label="Voltar" to="/"
+        label="Voltar" to="/">
     </q-btn>
 
     <h1 class="text-center text-4xl mb-15">Você é aluno de que?</h1>

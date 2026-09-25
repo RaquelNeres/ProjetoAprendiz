@@ -1,14 +1,21 @@
 <template>
-  <div v-for="aula in cursoState.aulas" :key="aula.id"
-       class="bg-[#a5d8ff] w-80 border-2 rounded-2xl h-60 pt-10">
+  
+  <div v-for="aula in aulas" :key="aula.id"
+       class="bg-[#a5d8ff] w-80 border-2 rounded-2xl h-60 pt-5">
     <div class="text-xl ml-5">
-      <h6>{{ aula.name }}</h6>
+      <h5>{{ aula.name }}</h5>
+      <p>{{ aula.descricao }}</p>
       <p>{{ aula.disciplina }}</p>
       <p>{{ aula.presentes.join(', ') }}</p>
-      <q-btn class="left-46 bottom-1" label="Editar" @click="abrir(aula)" />
+
+      <button @click="abrir2(aula)">
+        <q-icon size="sm" name="delete" />
+      </button>
+      <q-btn class="left-40 bottom-1" label="Editar" @click="abrir(aula)" />
     </div>
   </div>
 
+  <!-- dialog para mostrar o conteudo das aulas -->
   <q-dialog v-model="aberto">
     <q-card style="width: 500px; max-width: 90vw">
       <q-card-section class="text-h6">Editar aula #{{ form.id }}</q-card-section>
@@ -34,33 +41,60 @@
 
       <q-card-actions align="right">
         <q-btn flat label="Cancelar" v-close-popup />
-        <q-btn color="primary" label="Salvar" @click="salvar" v-close-popup />
+        <q-btn color="primary" label="Salvar" @click="" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <!-- dialog para excluir aula -->
+  <q-dialog v-model="aberto2">
+    <q-card style="width: 500px; max-width: 90vw">
+      <q-card-section class="text-h4 mt-5">Excluir aula #{{ form.id }}</q-card-section>
+
+      <q-card-section class="text-h6 text-amber-600">"{{ form.name }}"</q-card-section>
+
+      <q-card-section class="text-xl q-gutter-md scroll" style="max-height: 65vh">
+        <p>Tem certeza que deseja excluir esta aula?</p>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn flat label="Cancelar" v-close-popup />
+        <q-btn color="negative" label="Excluir" @click="excluir" v-close-popup />
       </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
 
 <script setup>
-    import { ref, computed } from 'vue'
-    import { cursoState } from '/src/importDados.js'
+  import { tiAlert } from '@quasar/extras/themify'
+  import { ref, computed } from 'vue'
 
-    const aberto = ref(false)
-    const form = ref({})
+  const props = defineProps({
+      aulas: Array
+  })
 
-    function abrir(aula) {
-    // cópia profunda: arrays também são copiados, então Cancelar não altera nada
+  const aberto = ref(false)
+  const aberto2 = ref(false)
+  const form = ref({})
+  const emit = defineEmits(['deletar'])
+
+
+  function abrir(aula) {
     form.value = JSON.parse(JSON.stringify(aula))
     aberto.value = true
-    }
+  }
 
-    function salvar() {
-        const i = cursoState.aulas.findIndex(a => a.id === form.value.id)
-        cursoState.aulas[i] = form.value
-    }
+  function abrir2(aula) {
+    form.value = JSON.parse(JSON.stringify(aula))
+    aberto2.value = true
+  }
 
-    const alunosDaDisciplina = computed(() =>
-        cursoState.alunos
-            .filter(a => a.disciplina === form.value.disciplina)
-            .map(a => a.name)
-    )
+  function excluir() {    
+    emit('deletar', form.value.id)
+  }
+
+  // function salvar() {
+  //     const i = props.aulas.findIndex(a => a.id === form.value.id)
+  //     props.aulas[i] = form.value
+  // }
 </script>

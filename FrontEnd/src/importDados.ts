@@ -8,7 +8,8 @@ export const cursoState = reactive({
     // --- PARTITURA ---
     { 
       id: 1, 
-      name: "Partitura 1: Clave de Sol e Figuras Rítmicas", 
+      name: "Partitura 1: ", 
+      descricao: 'Clave de Sol e Figuras Rítmicas',
       disciplina: "Partitura", 
       topicos: ["Clave de Sol", "Semibreve e Mínima", "Linhas e Espaços"], 
       video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
@@ -18,7 +19,8 @@ export const cursoState = reactive({
     },
     { 
       id: 2, 
-      name: "Partitura 2: Clave de Fá e Semínimas", 
+      name: "Partitura 2: ", 
+      descricao: 'Clave de Fá e Semínimas',
       disciplina: "Partitura", 
       topicos: ["Clave de Fá", "Pauta dupla", "Semínima e Pausas"], 
       video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
@@ -28,7 +30,8 @@ export const cursoState = reactive({
     },
     { 
       id: 3, 
-      name: "Partitura 3: Armadura de Clave e Acidentes", 
+      name: "Partitura 3: ", 
+      descricao: 'Armadura de Clave e Acidentes',
       disciplina: "Partitura", 
       topicos: ["Sustenidos", "Bemóis", "Bequadro", "Tonalidades"], 
       video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
@@ -40,7 +43,8 @@ export const cursoState = reactive({
     // --- TECLADO ---
     { 
       id: 4, 
-      name: "Teclado 1: Postura, Digitação e Dó Central", 
+      name: "Teclado 1: ", 
+      descricao: 'Postura, Digitação e Dó Central',
       disciplina: "Teclado", 
       topicos: ["Dó Central", "Numeração dos dedos", "Exercícios de 5 dedos"], 
       video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
@@ -50,7 +54,8 @@ export const cursoState = reactive({
     },
     { 
       id: 5, 
-      name: "Teclado 2: Primeiros Acordes Maiores", 
+      name: "Teclado 2: ", 
+      descricao: 'Primeiros Acordes Maiores',
       disciplina: "Teclado", 
       topicos: ["Tríades maiores", "Acordes C, F e G", "Mão esquerda na base"], 
       video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
@@ -60,7 +65,8 @@ export const cursoState = reactive({
     },
     { 
       id: 6, 
-      name: "Teclado 3: Independência das Mãos e Inversões", 
+      name: "Teclado 3: ", 
+      descricao: 'Independência das Mãos e Inversões',
       disciplina: "Teclado", 
       topicos: ["Inversão de acordes", "Coordenação motora", "Levada pop"], 
       video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
@@ -71,15 +77,15 @@ export const cursoState = reactive({
   ],
   alunos: [
     // Alunos de Teclado
-    { id: 1, name: "Joao", senha: "1234", disciplina: "Teclado", frequencia: 85 },
-    { id: 3, name: "Camila", senha: "camila2024", disciplina: "Teclado", frequencia: 90 },
-    { id: 4, name: "Lucas", senha: "lucas_key", disciplina: "Teclado", frequencia: 75 },
-    { id: 5, name: "Rafael", senha: "rafapiano", disciplina: "Teclado", frequencia: 65 },
+    { id: 1, name: "Joao", disciplina: "Teclado", frequencia: 85 },
+    { id: 3, name: "Camila", disciplina: "Teclado", frequencia: 90 },
+    { id: 4, name: "Lucas", disciplina: "Teclado", frequencia: 75 },
+    { id: 5, name: "Rafael", disciplina: "Teclado", frequencia: 65 },
 
     // Alunos de Partitura
-    { id: 2, name: "Maria", senha: "4321", disciplina: "Partitura", frequencia: 95 },
-    { id: 6, name: "Carlos", senha: "carlos_part", disciplina: "Partitura", frequencia: 80 },
-    { id: 7, name: "Fernanda", senha: "fer_musica", disciplina: "Partitura", frequencia: 70 },
-    { id: 8, name: "Juliana", senha: "ju_solfa", disciplina: "Partitura", frequencia: 45 }
+    { id: 2, name: "Maria", disciplina: "Partitura", frequencia: 95 },
+    { id: 6, name: "Carlos", disciplina: "Partitura", frequencia: 80 },
+    { id: 7, name: "Fernanda", disciplina: "Partitura", frequencia: 70 },
+    { id: 8, name: "Juliana", disciplina: "Partitura", frequencia: 45 }
   ]
 })

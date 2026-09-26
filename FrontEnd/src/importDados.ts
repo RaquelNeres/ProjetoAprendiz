@@ -12,7 +12,7 @@ export const cursoState = reactive({
       descricao: 'Clave de Sol e Figuras Rítmicas',
       disciplina: "Partitura", 
       topicos: ["Clave de Sol", "Semibreve e Mínima", "Linhas e Espaços"], 
-      video: "https://www.youtube.com/watch?v=0slN9AKaD_4", 
+      video: "https://youtu.be/r7e65I3fYMs?si=mW9HZ8FYJrZNo34j", 
       imgs: "https://dailyverses.net/images/pt/arc/salmos-32-8-3.jpg", 
       atividades: "https://www.superpartituras.com/Content/demonstracoes/apostila-1.jpg", 
       presentes: ["Maria", "Carlos", "Fernanda"] 

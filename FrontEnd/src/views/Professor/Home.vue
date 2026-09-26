@@ -96,11 +96,20 @@ import ProfAlunos from '../../components/profAlunos.vue';
         <div class="column q-gutter-y-sm items-center">
           <!-- Superior -->
           <q-btn fab-mini color="primary" icon="control_point" 
-            @click="addAula" v-close-popup/>
+            @click="addAula" v-close-popup>
+            <q-tooltip  anchor="center left" self="center right">
+              Add Aula
+            </q-tooltip>
+          </q-btn>
+
 
           <!-- Inferior -->
           <q-btn fab-mini color="primary" icon="person_add_alt" 
-            @click="addAluno" v-close-popup />
+            @click="addAluno" v-close-popup >
+            <q-tooltip  anchor="center left" self="center right">
+              Add Aluno
+            </q-tooltip>
+          </q-btn>
           
         </div>
       </q-menu>

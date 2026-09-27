@@ -76,6 +76,7 @@ export const cursoState = reactive({
     }
   ],
   alunos: [
+    // tirar a frequencia, pra fazer o calculo depois com base nas aulas que aquele aluno esteve presente
     // Alunos de Teclado
     { id: 1, name: "Joao", disciplina: "Teclado", frequencia: 85 },
     { id: 3, name: "Camila", disciplina: "Teclado", frequencia: 90 },

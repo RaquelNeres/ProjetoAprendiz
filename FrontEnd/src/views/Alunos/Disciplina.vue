@@ -14,7 +14,7 @@
         <img class="border-5 rounded-[40px] h-80" src="https://dailyverses.net/images/pt/arc/salmos-32-8-3.jpg" alt="versiculo">
     </div>
 
-    <div class="max-w-300 w-full">
+    <div class="max-w-300 w-full mt-5">
         <alunosAulas  :aulas="aulas"/>
     </div>
 

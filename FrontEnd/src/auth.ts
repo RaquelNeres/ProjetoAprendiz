@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { createInternalNeonAuth } from '@neondatabase/neon-js/auth'
+import { apiUrl } from './api'
 
 type AuthUser = {
   id: string
@@ -85,5 +86,5 @@ export async function fetchAdmin(input: RequestInfo | URL, init: RequestInit = {
 
   const headers = new Headers(init.headers)
   headers.set('Authorization', `Bearer ${token}`)
-  return fetch(input, { ...init, headers })
+  return fetch(apiUrl(input), { ...init, headers })
 }

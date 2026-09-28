@@ -2,6 +2,7 @@
   import { ref, computed, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { useQuasar } from 'quasar';
+  import { apiUrl } from '../../api';
   import { fetchAdmin, signOutAdmin } from '../../auth';
   import Desempenho from '../../components/Desempenho.vue';
   import profAulas from '../../components/profAulas.vue'
@@ -20,7 +21,7 @@
   // Banco de dados
   const carregarAulasDb = async () => {
     try {
-        const response = await fetch('/api/aulas')
+        const response = await fetch(apiUrl('/api/aulas'))
         if (!response.ok) throw new Error(`HTTP Error: ${response.status}`)
 
         const aulasDb = await response.json()
@@ -37,7 +38,7 @@
 
   const carregarAlunosDb = async () => {
     try {
-        const response = await fetch('/api/alunos')
+        const response = await fetch(apiUrl('/api/alunos'))
         if (!response.ok) throw new Error(`HTTP Error: ${response.status}`)
 
         const alunosDb = await response.json()

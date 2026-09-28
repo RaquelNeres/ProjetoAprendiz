@@ -24,6 +24,7 @@
 <script setup>
     import { computed, ref, onMounted } from 'vue'
     import { useRoute } from 'vue-router'
+    import { apiUrl } from '../../api'
     import Desempenho from '../../components/Desempenho.vue'
     import alunosAulas from '../../components/alunosAulas.vue'
 
@@ -32,7 +33,7 @@
 
     const carregarAulasDb = async () => {
         try {
-            const response = await fetch('/api/aulas')
+            const response = await fetch(apiUrl('/api/aulas'))
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`)
 
             const aulasDb = await response.json()

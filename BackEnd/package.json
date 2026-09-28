@@ -2,9 +2,10 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "hello-world.js",
+  "main": "serve.js",
   "scripts": {
-    "start": "nodemon serve.js",
+    "dev": "nodemon serve.js",
+    "start": "node serve.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

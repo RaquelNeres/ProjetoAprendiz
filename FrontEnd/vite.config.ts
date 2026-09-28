@@ -11,5 +11,13 @@ export default defineConfig({
     }),
     tailwindcss(),
     quasar()
-  ]
+  ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000', // Altere caso seu backend esteja em outra porta
+        changeOrigin: true,
+      }
+    }
+  }
 })

@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@neondatabase/neon-js": "^0.7.0-beta",
     "@quasar/extras": "^2.1.0",
     "@tailwindcss/vite": "^4.3.3",
     "quasar": "^2.33.2",

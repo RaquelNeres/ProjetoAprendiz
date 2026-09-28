@@ -24,7 +24,7 @@
         <q-input v-model="form.name" label="Nome" outlined />
 
         <q-select v-model="form.disciplina" :options="['Partitura', 'Teclado']"
-                  label="Disciplina" outlined />
+                  behavior="menu" label="Disciplina" outlined />
 
         <q-select v-model="form.topicos" label="Tópicos" outlined
                   multiple use-chips use-input hide-dropdown-icon
@@ -35,7 +35,7 @@
         <q-input v-model="form.atividades" label="Atividades (URL)" outlined />
 
         <q-select v-model="form.presentes" label="Presentes" outlined
-                  multiple use-chips
+                  multiple use-chips behavior="menu"
                   :options="alunosDaDisciplina" />
       </q-card-section>
 
@@ -66,18 +66,29 @@
 </template>
 
 <script setup>
-  import { tiAlert } from '@quasar/extras/themify'
-  import { ref, computed } from 'vue'
+  import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+  import { fetchAdmin } from '../auth'
 
   const props = defineProps({
-      aulas: Array
+    aulas: {
+      type: Array,
+      default: () => []
+    },
+    alunos: {
+      type: Array,
+      default: () => []
+    }
   })
 
   const aberto = ref(false)
   const aberto2 = ref(false)
   const form = ref({})
-  const emit = defineEmits(['deletar'])
-
+  const emit = defineEmits(['deletar', 'atualizar'])
+  const alunosDaDisciplina = computed(() =>
+    props.alunos
+      .filter(aluno => aluno.disciplina === form.value.disciplina)
+      .map(aluno => aluno.name)
+  )
 
   function abrir(aula) {
     form.value = JSON.parse(JSON.stringify(aula))
@@ -89,12 +100,70 @@
     aberto2.value = true
   }
 
-  function excluir() {    
-    emit('deletar', form.value.id)
+  async function salvar() {
+    if (!form.value.id || !form.value.name || !form.value.topicos?.length || !form.value.presentes) {
+      console.warn('Dados obrigatórios da aula não preenchidos.')
+      return
+    }
+
+    try {
+      const response = await fetchAdmin(`/api/editarAula/${form.value.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.value.name,
+          topicos: form.value.topicos,
+          disciplina: form.value.disciplina,
+          video: form.value.video || null,
+          imgs: form.value.imgs || null,
+          atividades: form.value.atividades || null,
+          presentes: form.value.presentes
+        })
+      })
+
+      if (!response.ok) {
+        const erro = await response.json().catch(() => ({}))
+        throw new Error(erro.error || `HTTP Error: ${response.status}`)
+      }
+
+      const aulaAtualizada = await response.json()
+      emit('atualizar', aulaAtualizada)
+      aberto.value = false
+    } catch (error) {
+      console.error('Erro ao editar aula:', error)
+    }
   }
 
-  // function salvar() {
-  //     const i = props.aulas.findIndex(a => a.id === form.value.id)
-  //     props.aulas[i] = form.value
-  // }
+  async function excluir() {
+    if (!form.value.id) return
+
+    try {
+      const response = await fetchAdmin(`/api/deletarAula/${form.value.id}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        const erro = await response.json().catch(() => ({}))
+        throw new Error(erro.error || `HTTP Error: ${response.status}`)
+      }
+
+      emit('deletar', { tipo: 'aula', id: form.value.id })
+      aberto2.value = false
+    } catch (error) {
+      console.error('Erro ao excluir aula:', error)
+    }
+  }
+
+  function capturarSalvar(event) {
+    const botao = event.target.closest('button')
+    if (!botao || botao.textContent?.trim() !== 'Salvar') return
+    if (!aberto.value) return
+    if (!botao.closest('.q-dialog')) return
+
+    event.preventDefault()
+    salvar()
+  }
+
+  onMounted(() => document.addEventListener('click', capturarSalvar, true))
+  onBeforeUnmount(() => document.removeEventListener('click', capturarSalvar, true))
 </script>

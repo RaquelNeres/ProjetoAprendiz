@@ -22,12 +22,35 @@
 </template>
 
 <script setup>
-    import { computed } from 'vue'
+    import { computed, ref, onMounted } from 'vue'
     import { useRoute } from 'vue-router'
     import Desempenho from '../../components/Desempenho.vue'
     import alunosAulas from '../../components/alunosAulas.vue'
-    import { cursoState } from '/src/importDados.js'
-  
+
+    const aulasLocal = ref([])
+    const isLoading = ref(true)
+
+    const carregarAulasDb = async () => {
+        try {
+            const response = await fetch('/api/aulas')
+            if (!response.ok) throw new Error(`HTTP Error: ${response.status}`)
+
+            const aulasDb = await response.json()
+
+            if (aulasDb && !aulasDb.erro) {
+                aulasLocal.value = aulasDb
+            }
+        } catch (error) {
+            console.warn("Falha na API:", error)
+        } finally {
+            isLoading.value = false
+        }
+    }
+
+    onMounted(() => {
+        carregarAulasDb()
+    })
+
     const route = useRoute()
 
     const parametroRota = computed(() => (route.params.disciplina || '').toString().toLowerCase())
@@ -37,17 +60,12 @@
         return parametroRota.value.charAt(0).toUpperCase() + parametroRota.value.slice(1)
     })
 
-
     // Filtra de forma reativa com computed
-    const alunos = computed(() => {
-        return cursoState.alunos.filter(
-            aluno => aluno.disciplina.toLowerCase() === parametroRota.value
+    const aulas = computed(() => {
+        return aulasLocal.value.filter(
+            aula => aula.disciplina && aula.disciplina.toLowerCase() === parametroRota.value
         )
     })
 
-    const aulas = computed(() => {
-        return cursoState.aulas.filter(
-            aula => aula.disciplina.toLowerCase() === parametroRota.value
-        )
-    })
+
 </script>

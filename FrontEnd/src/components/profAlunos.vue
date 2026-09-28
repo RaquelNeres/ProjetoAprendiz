@@ -25,7 +25,7 @@
         <q-select v-model="form.disciplina" :options="['Partitura', 'Teclado']"
             label="Disciplina" outlined />
 
-        <q-input v-model="form.frequencia" label="Atividades (URL)" outlined />
+        <q-input v-model="form.frequencia" label="Freguencia" outlined />
       </q-card-section>
 
       <q-card-actions align="right">
@@ -55,18 +55,20 @@
 </template>
 
 <script setup>
-  import { tiAlert } from '@quasar/extras/themify'
-  import { ref, computed } from 'vue'
+  import { ref, onMounted, onBeforeUnmount } from 'vue'
+  import { fetchAdmin } from '../auth'
 
   const props = defineProps({
-      alunos: Array
+    alunos: {
+      type: Array,
+      default: () => []
+    }
   })
 
   const aberto = ref(false)
   const aberto2 = ref(false)
   const form = ref({})
   const emit = defineEmits(['deletar'])
-
 
   function abrir(aluno) {
     form.value = JSON.parse(JSON.stringify(aluno))
@@ -78,12 +80,69 @@
     aberto2.value = true
   }
 
-  function excluir() {    
-    emit('deletar', form.value.id)
+  async function salvar() {
+    if (!form.value.id || !form.value.name || !form.value.disciplina) return
+
+    try {
+      const response = await fetchAdmin(`/api/editarAluno/${form.value.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.value.name,
+          disciplina: form.value.disciplina
+        })
+      })
+
+      if (!response.ok) {
+        const erro = await response.json().catch(() => ({}))
+        throw new Error(erro.error || `HTTP Error: ${response.status}`)
+      }
+
+      const alunoAtualizado = await response.json()
+
+      const index = props.alunos.findIndex(
+        aluno => aluno.id === alunoAtualizado.id
+      )
+
+      if (index !== -1) {
+        Object.assign(props.alunos[index], alunoAtualizado)
+      }
+      aberto.value = false
+    } catch (error) {
+      console.error('Erro ao editar aluno:', error)
+    }
   }
 
-  // function salvar() {
-  //     const i = props.alunos.findIndex(a => a.id === form.value.id)
-  //     props.alunos[i] = form.value
-  // }
+  async function excluir() {
+    if (!form.value.id) return
+
+    try {
+      const response = await fetchAdmin(`/api/deletaraluno/${form.value.id}`, {
+        method: 'DELETE'
+      })
+
+      if (!response.ok) {
+        const erro = await response.json().catch(() => ({}))
+        throw new Error(erro.error || `HTTP Error: ${response.status}`)
+      }
+
+      emit('deletar', { tipo: 'aluno', id: form.value.id })
+      aberto2.value = false
+    } catch (error) {
+      console.error('Erro ao excluir aluno:', error)
+    }
+  }
+
+  function capturarSalvar(event) {
+    const botao = event.target.closest('button')
+    if (!botao || botao.textContent?.trim() !== 'Salvar') return
+    if (!aberto.value) return
+    if (!botao.closest('.q-dialog')) return
+
+    event.preventDefault()
+    salvar()
+  }
+
+  onMounted(() => document.addEventListener('click', capturarSalvar, true))
+  onBeforeUnmount(() => document.removeEventListener('click', capturarSalvar, true))
 </script>

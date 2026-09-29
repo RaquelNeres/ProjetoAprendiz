@@ -1,26 +1,79 @@
 # Projeto Aprendiz
 
-## Implantacao na Vercel
+Aplicação web desenvolvida para facilitar a gestão de aulas, alunos, frequência e conteúdos do **Projeto Aprendiz**, iniciativa em que voluntários compartilham conhecimentos por meio de aulas.
 
-Crie dois projetos Vercel usando este mesmo repositorio, cada um com seu proprio **Root Directory**:
+O projeto surgiu da necessidade de substituir um controle que anteriormente era realizado manualmente através do Google Docs por uma aplicação centralizada e mais organizada.
 
-- Frontend: `FrontEnd` (Vercel detecta Vite; comando de build `npm run build`, saida `dist`).
-- Backend: `BackEnd` (usa a configuracao `vercel.json` desta pasta).
+## Sobre o projeto
 
-Configure estas variaveis no projeto **BackEnd**:
+O Projeto Aprendiz possui diferentes áreas de acesso para professores e alunos.
 
-- `DATABASE_URL`
-- `NEON_AUTH_BASE_URL`
-- `ADMIN_USER_ID`
+A área do professor permite gerenciar as aulas, alunos, conteúdos e frequência. Já os alunos podem acessar as aulas e consultar os materiais disponibilizados pelos professores.
 
-Configure estas variaveis no projeto **FrontEnd**:
+Antes do desenvolvimento, as principais telas e fluxos da aplicação foram planejados utilizando o **Excalidraw**, permitindo estruturar a experiência antes da implementação.
 
-- `VITE_API_URL`: URL publica do projeto Backend, sem `/` no final.
-- `VITE_NEON_AUTH_URL`: URL do Neon Auth.
-- `VITE_ADMIN_USER_ID`: ID do usuario administrador.
+## Funcionalidades
 
-Inclua o dominio publicado do FrontEnd nas origens permitidas do Neon Auth. Depois de alterar variaveis `VITE_*`, crie um novo deploy para incorpora-las ao build.
+### Professor
 
-## Desenvolvimento local
+- Cadastro e gerenciamento de alunos;
+- Cadastro e gerenciamento de aulas;
+- Organização das aulas por disciplina;
+- Controle de frequência;
+- Edição e exclusão de aulas;
+- Adição de tópicos, vídeos e imagens aos conteúdos;
+- Visualização do desempenho e frequência dos alunos.
 
-O frontend usa o proxy do Vite para encaminhar `/api` a `http://localhost:3000`. Inicie o backend com `npm run dev` dentro de `BackEnd` e o frontend com `npm run dev` dentro de `FrontEnd`.
+### Aluno
+
+- Visualização das aulas disponíveis;
+- Acesso aos conteúdos das aulas;
+- Visualização de tópicos abordados;
+- Acesso a vídeos e imagens disponibilizados pelo professor;
+- Conteúdos organizados por disciplina.
+
+## Tecnologias
+
+### Front-end
+
+- **Vue.js** — construção da interface e componentes;
+- **Quasar Framework** — componentes de interface e recursos para desenvolvimento da aplicação;
+- **JavaScript**;
+- **Vite** — ferramenta de build e desenvolvimento;
+- **HTML5**;
+- **Tailwind**.
+
+### Back-end
+
+- **Node.js**;
+- **Express.js**;
+- **JavaScript**;
+- **Neon PostgreSQL** — banco de dados;
+- **Neon Auth** — autenticação e gerenciamento de usuários.
+
+### Ferramentas e serviços
+
+- **Git e GitHub** — versionamento e hospedagem do código;
+- **Vercel** — hospedagem da aplicação;
+- **Excalidraw** — planejamento das interfaces e fluxos.
+
+## Estrutura do projeto
+
+O repositório está dividido em duas aplicações:
+
+```text
+ProjetoAprendiz/
+│
+├── FrontEnd/
+│   ├── src/
+│   ├── public/
+│   ├── package.json
+│   └── ...
+│
+├── BackEnd/
+│   ├── src/
+│   ├── vercel.json
+│   ├── package.json
+│   └── ...
+│
+└── README.md

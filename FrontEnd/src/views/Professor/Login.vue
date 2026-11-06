@@ -95,6 +95,17 @@ async function salvarNovaSenha() {
 <template>
   <main class="login-page">
     <div class="login-layout">
+      <!-- Botão Voltar alinhado à delimitação superior da div login-layout -->
+      <div class="login-back-bar">
+        <q-btn
+          rounded
+          icon="arrow_back"
+          label="Voltar"
+          to="/"
+          class="back-button shadow-sm"
+        />
+      </div>
+
       <section class="login-intro" aria-labelledby="login-title">
         <div class="brand-mark" aria-hidden="true">
           <q-icon name="music_note" size="30px" />
@@ -236,6 +247,7 @@ async function salvarNovaSenha() {
 }
 
 .login-layout {
+  position: relative;
   width: min(100%, 1000px);
   min-height: 560px;
   display: grid;
@@ -244,8 +256,26 @@ async function salvarNovaSenha() {
   gap: clamp(40px, 8vw, 100px);
 }
 
+.login-back-bar {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  z-index: 10;
+}
+
 .login-intro {
   padding: 24px 0;
+}
+
+.back-button {
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 4px 16px;
+  text-transform: none;
 }
 
 .brand-mark {
@@ -440,7 +470,11 @@ async function salvarNovaSenha() {
   .login-layout {
     min-height: auto;
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: 24px;
+  }
+
+  .login-back-bar {
+    position: static;
   }
 
   .login-intro {

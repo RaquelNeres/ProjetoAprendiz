@@ -1,16 +1,18 @@
 <template>
   
   <div v-for="aluno in alunos" :key="aluno.id"
-       class="bg-[#a5d8ff] w-80 border-2 rounded-2xl h-60 pt-5">
-    <div class="text-xl ml-5">
+       class="bg-[#a5d8ff] w-full max-w-80 border-2 rounded-2xl min-h-60 pt-5 pb-4">
+    <div class="text-xl ml-5 mr-5">
       <h4>{{ aluno.name }}</h4>
       <p>Disciplina: {{ aluno.disciplina }}</p>
       <p>Freguencia: {{ aluno.frequencia }}%</p>
 
-      <button @click="abrir2(aluno)">
-        <q-icon size="sm" name="delete" />
-      </button>
-      <q-btn class="left-40 bottom-1" label="Editar" @click="abrir(aluno)" />
+      <div class="flex justify-between items-center pr-3">
+        <button @click="abrir2(aluno)">
+          <q-icon size="sm" name="delete" />
+        </button>
+        <q-btn label="Editar" @click="abrir(aluno)" />
+      </div>
     </div>
   </div>
 

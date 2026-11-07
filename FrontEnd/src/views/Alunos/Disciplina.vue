@@ -1,17 +1,17 @@
 <template>
-  <div class="flex flex-col items-center">
+  <div class="flex flex-col items-center px-4">
     <q-btn rounded class="fixed top-5 left-5 z-50"
         label="Voltar" to="/aluno">
     </q-btn>
         
     <header class="text-center mt-5 ">
-        <p class="font-medium text-[50px] text-center mb-5">
+        <p class="font-medium text-3xl sm:text-[50px] text-center mb-5">
             APDSJ, Aprendizes de {{disciplina}}
         </p>
     </header>
 
     <div class="flex justify-center">
-        <img class="border-5 rounded-[40px] h-80" src="https://dailyverses.net/images/pt/arc/salmos-32-8-3.jpg" alt="versiculo">
+        <img class="border-5 rounded-[40px] max-h-80 w-auto" src="https://dailyverses.net/images/pt/arc/salmos-32-8-3.jpg" alt="versiculo">
     </div>
 
     <div class="max-w-300 w-full mt-5">
@@ -64,7 +64,7 @@
     // Filtra de forma reativa com computed
     const aulas = computed(() => {
         return aulasLocal.value.filter(
-            aula => aula.disciplina && aula.disciplina.toLowerCase() === parametroRota.value
+            aula => aula.disciplina && aula.disciplina.toLowerCase() === parametroRota.value && aula.visibilidade !== 'professor'
         )
     })
 

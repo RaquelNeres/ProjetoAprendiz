@@ -56,6 +56,28 @@ async function requireAdmin(req, res, next) {
     next();
 }
 
+async function verificarAdminOpcional(req) {
+    if (!authJwks || !adminUserId) return false;
+    const token = req.get('authorization')?.match(/^Bearer\s+(.+)$/i)?.[1];
+    if (!token) return false;
+
+    try {
+        const { payload } = await jwtVerify(token, authJwks);
+        if (payload.sub !== adminUserId) return false;
+
+        const users = await sql`
+            SELECT role, banned
+            FROM neon_auth.user
+            WHERE id = ${payload.sub}
+            LIMIT 1
+        `;
+
+        return users[0]?.role === 'admin' && !users[0]?.banned;
+    } catch {
+        return false;
+    }
+}
+
 app.use('/api', (req, res, next) => {
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
         return requireAdmin(req, res, next);
@@ -70,9 +92,11 @@ async function frequenciaAluno (alunoVerificado, disciplinaEscolhida) {
         COUNT(*) FILTER (
             WHERE ${alunoVerificado} = ANY(presentes) 
               AND disciplina = ${disciplinaEscolhida}
+              AND (visibilidade IS NULL OR visibilidade != 'professor')
         ) AS presencas,
         COUNT(*) FILTER (
             WHERE disciplina = ${disciplinaEscolhida}
+              AND (visibilidade IS NULL OR visibilidade != 'professor')
         ) AS total_aulas
     FROM aulas
 `;
@@ -90,7 +114,10 @@ async function frequenciaAluno (alunoVerificado, disciplinaEscolhida) {
 // retornar todas as aulas
 app.get('/api/aulas', async (req, res) => {
     try {
-        const resultado = await sql`SELECT * FROM aulas`;
+        const ehAdmin = await verificarAdminOpcional(req);
+        const resultado = ehAdmin
+            ? await sql`SELECT * FROM aulas`
+            : await sql`SELECT * FROM aulas WHERE visibilidade IS NULL OR visibilidade = 'todos' OR visibilidade = 'alunos'`;
 
         const aulas = resultado.map(row => ({
             id: row.id,
@@ -100,7 +127,8 @@ app.get('/api/aulas', async (req, res) => {
             video: row.video,          // pode ser null
             imgs: row.imgs,              // pode ser null
             atividades: row.atividades,  // pode ser null
-            presentes: row.presentes
+            presentes: row.presentes,
+            visibilidade: row.visibilidade || 'todos'
         }));
         
         res.json(aulas);
@@ -110,18 +138,42 @@ app.get('/api/aulas', async (req, res) => {
     }
 });
 
+function normalizarMidia(valor) {
+    if (!valor) return null;
+    if (Array.isArray(valor)) {
+        const linhas = valor
+            .map(item => {
+                if (typeof item === 'string') return item.trim();
+                if (item && typeof item === 'object' && item.url) {
+                    const url = String(item.url).trim();
+                    const nome = item.nome ? String(item.nome).trim() : '';
+                    return nome ? `${nome} | ${url}` : url;
+                }
+                return '';
+            })
+            .filter(Boolean);
+        return linhas.length > 0 ? linhas.join('\n') : null;
+    }
+    if (typeof valor === 'string') {
+        const limpo = valor.trim();
+        return limpo.length > 0 ? limpo : null;
+    }
+    return null;
+}
+
 app.post('/api/adicionarAula', async (req, res) => {
     try {
-        const { name, topicos, presentes, disciplina } = req.body;
-        const video = req.body.video ? req.body.video : null;
-        const imgs = req.body.imgs ? req.body.imgs : null;
-        const atividades = req.body.atividades ? req.body.atividades : null;
+        const { name, topicos, presentes, disciplina, visibilidade } = req.body;
+        const video = normalizarMidia(req.body.video);
+        const imgs = normalizarMidia(req.body.imgs);
+        const atividades = normalizarMidia(req.body.atividades);
+        const visibilidadeDefinida = visibilidade || 'todos';
 
         if (!name || !topicos || !presentes) {
             return res.status(400).json({ error: "Name,  descrição, disciplina e presentes são obrigatórios" });
         }
 
-        const adicionando = await sql`INSERT INTO aulas (name, topicos, disciplina, video, imgs, atividades, presentes) VALUES (${name}, ${topicos}, ${disciplina}, ${video}, ${imgs}, ${atividades}, ${presentes}) RETURNING *`;
+        const adicionando = await sql`INSERT INTO aulas (name, topicos, disciplina, video, imgs, atividades, presentes, visibilidade) VALUES (${name}, ${topicos}, ${disciplina}, ${video}, ${imgs}, ${atividades}, ${presentes}, ${visibilidadeDefinida}) RETURNING *`;
 
         if (adicionando.length > 0) {
             console.log("Deu tudo certo");
@@ -138,16 +190,17 @@ app.post('/api/adicionarAula', async (req, res) => {
 app.put('/api/editarAula/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const { name, topicos, presentes, disciplina } = req.body;
-        const video = req.body.video ? req.body.video : null;
-        const imgs = req.body.imgs ? req.body.imgs : null;
-        const atividades = req.body.atividades ? req.body.atividades : null;
+        const { name, topicos, presentes, disciplina, visibilidade } = req.body;
+        const video = normalizarMidia(req.body.video);
+        const imgs = normalizarMidia(req.body.imgs);
+        const atividades = normalizarMidia(req.body.atividades);
+        const visibilidadeDefinida = visibilidade || 'todos';
 
         if (!name || !topicos || !presentes) {
             return res.status(400).json({ error: "Name,  descrição, disciplina e presentes são obrigatórios" });
         }
 
-        const editando = await sql`UPDATE aulas SET name = ${name}, topicos = ${topicos}, disciplina = ${disciplina}, video = ${video}, imgs = ${imgs}, atividades = ${atividades}, presentes = ${presentes} WHERE id = ${id} RETURNING *`;
+        const editando = await sql`UPDATE aulas SET name = ${name}, topicos = ${topicos}, disciplina = ${disciplina}, video = ${video}, imgs = ${imgs}, atividades = ${atividades}, presentes = ${presentes}, visibilidade = ${visibilidadeDefinida} WHERE id = ${id} RETURNING *`;
 
         if (editando.length > 0) {
             console.log("Aula editada com sucesso");
@@ -157,6 +210,28 @@ app.put('/api/editarAula/:id', async (req, res) => {
         }
     } catch (error) {
         console.error("Erro no PUT:", error);
+        res.status(500).json({ error: "Erro interno no servidor" });
+    }
+});
+
+app.patch('/api/aulaVisibilidade/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const { visibilidade } = req.body;
+
+        if (!visibilidade || !['todos', 'alunos', 'professor'].includes(visibilidade)) {
+            return res.status(400).json({ error: "Visibilidade inválida" });
+        }
+
+        const editando = await sql`UPDATE aulas SET visibilidade = ${visibilidade} WHERE id = ${id} RETURNING *`;
+
+        if (editando.length > 0) {
+            res.json(editando[0]);
+        } else {
+            res.status(404).json({ error: "Aula não encontrada" });
+        }
+    } catch (error) {
+        console.error("Erro no PATCH:", error);
         res.status(500).json({ error: "Erro interno no servidor" });
     }
 });

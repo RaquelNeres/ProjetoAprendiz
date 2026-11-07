@@ -1,17 +1,32 @@
 <template>
   
   <div v-for="aula in aulas" :key="aula.id"
-       class="bg-[#a5d8ff] w-80 border-2 rounded-2xl h-60 pt-5">
-    <div class="text-xl ml-5">
+       class="bg-[#a5d8ff] w-full max-w-80 border-2 rounded-2xl pt-5 pb-4">
+    <div class="text-xl ml-5 mr-5">
       <h5>{{ aula.name }}</h5>
       <p>{{ aula.descricao }}</p>
       <p>{{ aula.disciplina }}</p>
       <p>{{ aula.presentes.join(', ') }}</p>
+      <div class="mb-2 flex items-center gap-1.5 text-sm font-medium">
+        <span>Visível para:</span>
+        <button
+          type="button"
+          @click="alternarVisibilidade(aula)"
+          class="cursor-pointer inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border"
+          :class="aula.visibilidade === 'professor'
+            ? 'bg-amber-100 text-amber-900 border-amber-300'
+            : 'bg-emerald-100 text-emerald-900 border-emerald-300'">
+          <q-icon :name="aula.visibilidade === 'professor' ? 'lock' : 'visibility'" size="14px" />
+          <span>{{ aula.visibilidade === 'professor' ? 'Apenas professor' : 'Alunos' }}</span>
+        </button>
+      </div>
 
-      <button @click="abrir2(aula)">
-        <q-icon size="sm" name="delete" />
-      </button>
-      <q-btn class="left-40 bottom-1" label="Editar" @click="abrir(aula)" />
+      <div class="flex justify-between items-center pr-3">
+        <button @click="abrir2(aula)">
+          <q-icon size="sm" name="delete" />
+        </button>
+        <q-btn label="Editar" @click="abrir(aula)" />
+      </div>
     </div>
   </div>
 
@@ -26,13 +41,55 @@
         <q-select v-model="form.disciplina" :options="['Partitura', 'Teclado']"
                   behavior="menu" label="Disciplina" outlined />
 
+        <q-select
+          v-model="form.visibilidade"
+          :options="opcoesVisibilidade"
+          emit-value
+          map-options
+          behavior="menu"
+          label="Visibilidade"
+          outlined
+        />
+
         <q-select v-model="form.topicos" label="Tópicos" outlined
                   multiple use-chips use-input hide-dropdown-icon
                   new-value-mode="add-unique" />
 
-        <q-input v-model="form.video" label="Vídeo (URL)" outlined />
-        <q-input v-model="form.imgs" label="Imagem (URL)" outlined />
-        <q-input v-model="form.atividades" label="Atividades (URL)" outlined />
+        <div class="border border-gray-300 rounded-xl p-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-sm text-gray-700">Vídeos</span>
+            <q-btn flat dense size="sm" color="primary" icon="add" label="Adicionar vídeo" @click="adicionarItem(form.videosLista)" />
+          </div>
+          <div v-for="(vid, idx) in form.videosLista" :key="idx" class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center bg-gray-50 p-2 rounded-lg">
+            <q-input v-model="vid.nome" dense outlined label="Nome do vídeo (opcional)" class="sm:w-2/5" />
+            <q-input v-model="vid.url" dense outlined label="Vídeo (URL)" class="flex-1" @blur="preencherTituloAutomatico(vid)" />
+            <q-btn flat round dense color="negative" icon="delete" @click="removerItem(form.videosLista, idx)" />
+          </div>
+        </div>
+
+        <div class="border border-gray-300 rounded-xl p-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-sm text-gray-700">Imagens</span>
+            <q-btn flat dense size="sm" color="primary" icon="add" label="Adicionar imagem" @click="adicionarItem(form.imgsLista)" />
+          </div>
+          <div v-for="(img, idx) in form.imgsLista" :key="idx" class="flex gap-2 items-center bg-gray-50 p-2 rounded-lg">
+            <q-input v-model="img.url" dense outlined label="Imagem (URL)" class="flex-1" />
+            <img v-if="img.url" :src="img.url" alt="Prévia" class="w-10 h-10 object-cover rounded border" />
+            <q-btn flat round dense color="negative" icon="delete" @click="removerItem(form.imgsLista, idx)" />
+          </div>
+        </div>
+
+        <div class="border border-gray-300 rounded-xl p-3 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-medium text-sm text-gray-700">Atividades</span>
+            <q-btn flat dense size="sm" color="primary" icon="add" label="Adicionar atividade" @click="adicionarItem(form.atividadesLista)" />
+          </div>
+          <div v-for="(ativ, idx) in form.atividadesLista" :key="idx" class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center bg-gray-50 p-2 rounded-lg">
+            <q-input v-model="ativ.nome" dense outlined label="Nome do arquivo (opcional)" class="sm:w-2/5" />
+            <q-input v-model="ativ.url" dense outlined label="Atividades (URL)" class="flex-1" />
+            <q-btn flat round dense color="negative" icon="delete" @click="removerItem(form.atividadesLista, idx)" />
+          </div>
+        </div>
 
         <q-select v-model="form.presentes" label="Presentes" outlined
                   multiple use-chips behavior="menu"
@@ -68,6 +125,11 @@
 <script setup>
   import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
   import { fetchAdmin } from '../auth'
+  import {
+    extrairListaMidia,
+    serializarListaMidia,
+    buscarTituloVideo
+  } from '../midiaUtils'
 
   const props = defineProps({
     aulas: {
@@ -84,20 +146,76 @@
   const aberto2 = ref(false)
   const form = ref({})
   const emit = defineEmits(['deletar', 'atualizar'])
+  const opcoesVisibilidade = [
+    { label: 'Alunos', value: 'todos' },
+    { label: 'Apenas professor', value: 'professor' }
+  ]
   const alunosDaDisciplina = computed(() =>
     props.alunos
       .filter(aluno => aluno.disciplina === form.value.disciplina)
       .map(aluno => aluno.name)
   )
 
+  function adicionarItem(lista) {
+    lista.push({ nome: '', url: '' })
+  }
+
+  function removerItem(lista, index) {
+    if (lista.length > 1) {
+      lista.splice(index, 1)
+    } else {
+      lista[0] = { nome: '', url: '' }
+    }
+  }
+
+  async function preencherTituloAutomatico(itemVideo) {
+    if (itemVideo.url && !itemVideo.nome) {
+      const titulo = await buscarTituloVideo(itemVideo.url)
+      if (titulo && !itemVideo.nome) {
+        itemVideo.nome = titulo
+      }
+    }
+  }
+
   function abrir(aula) {
-    form.value = JSON.parse(JSON.stringify(aula))
+    const videosExtraidos = extrairListaMidia(aula.video, false)
+    const imgsExtraidas = extrairListaMidia(aula.imgs, false)
+    const atividadesExtraidas = extrairListaMidia(aula.atividades, false)
+
+    form.value = {
+      ...JSON.parse(JSON.stringify(aula)),
+      visibilidade: aula.visibilidade || 'todos',
+      videosLista: videosExtraidos.length ? videosExtraidos : [{ nome: '', url: '' }],
+      imgsLista: imgsExtraidas.length ? imgsExtraidas : [{ nome: '', url: '' }],
+      atividadesLista: atividadesExtraidas.length ? atividadesExtraidas : [{ nome: '', url: '' }]
+    }
     aberto.value = true
   }
 
   function abrir2(aula) {
     form.value = JSON.parse(JSON.stringify(aula))
     aberto2.value = true
+  }
+
+  async function alternarVisibilidade(aula) {
+    const novaVisibilidade = aula.visibilidade === 'professor' ? 'todos' : 'professor'
+    try {
+      const response = await fetchAdmin(`/api/aulaVisibilidade/${aula.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visibilidade: novaVisibilidade })
+      })
+
+      if (!response.ok) {
+        const erro = await response.json().catch(() => ({}))
+        throw new Error(erro.error || `HTTP Error: ${response.status}`)
+      }
+
+      const aulaAtualizada = await response.json()
+      emit('atualizar', aulaAtualizada)
+    } catch (error) {
+      console.error('Erro ao alternar visibilidade da aula:', error)
+    }
   }
 
   async function salvar() {
@@ -114,10 +232,11 @@
           name: form.value.name,
           topicos: form.value.topicos,
           disciplina: form.value.disciplina,
-          video: form.value.video || null,
-          imgs: form.value.imgs || null,
-          atividades: form.value.atividades || null,
-          presentes: form.value.presentes
+          video: serializarListaMidia(form.value.videosLista),
+          imgs: serializarListaMidia(form.value.imgsLista.map(i => ({ nome: '', url: i.url }))),
+          atividades: serializarListaMidia(form.value.atividadesLista),
+          presentes: form.value.presentes,
+          visibilidade: form.value.visibilidade || 'todos'
         })
       })
 
